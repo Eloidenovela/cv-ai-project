@@ -48,7 +48,8 @@ class DepartmentService(Service):
     def get_all(self):
         try:
             with Session(self.engine) as session:
-                departments = session.query(Department).all()
+                result = session.query(Department).all()
+                departments = [department.to_json() for department in result]
                 return departments
         except SQLAlchemyError as e:
             return e 

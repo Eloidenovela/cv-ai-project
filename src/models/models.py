@@ -1,11 +1,12 @@
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
+from config.settings import Settings
 
-from enums.enums import RoleEnum
+from .types.enums import RoleEnum
 
 Base = declarative_base()
-engine = create_engine("postgresql://postgres:123456789@localhost:5432/inar")
+engine = create_engine(Settings().DATABASE_URL)
 
 class User(Base):
     __tablename__ = "users"
@@ -21,7 +22,7 @@ class User(Base):
             "id": self.id,
             "username": self.username,
             "password": self.password,
-            "role": self.role.get_value(),
+            "role": self.role,
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
@@ -58,7 +59,6 @@ class Department(Base):
             id=data.get("id"),
             name=data.get("name")
         )
-
 
 class Employee(Base):
     __tablename__ = "employees"
@@ -126,7 +126,6 @@ class Presences(Base):
             presences=data.get("presences"),
             absences=data.get("absences")
         )
-
 
 def get_storage():
     Base.metadata.create_all(engine)

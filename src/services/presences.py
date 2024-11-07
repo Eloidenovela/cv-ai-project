@@ -52,7 +52,8 @@ class PresencesService(Service):
     def get_all(self):
         try:
             with Session(self.engine) as session:
-                presences = session.query(Presences).all()
+                result = session.query(Presences).all()
+                presences = [presence.to_json() for presence in result]
                 return presences
         except SQLAlchemyError as e:
             return e

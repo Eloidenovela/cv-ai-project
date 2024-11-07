@@ -54,7 +54,25 @@ class UserService(Service):
     def get_all(self):
         try:
             with Session(self.engine) as session:
-                users = session.query(User).all()
+                result = session.query(User).all()
+                users = [user.to_json() for user in result]
                 return users
+        except SQLAlchemyError as e:
+            return e
+        
+    def is_user(self, data):
+        try:
+            from sqlalchemy import and_
+            with Session(self.engine) as session:
+                user = session.query(User).filter(
+                    and_(
+                        User.username == data.get("username"),
+                        User.password == data.get("password")
+                    )
+                )
+                if not user:
+                    return None
+                return user.to_json()
+
         except SQLAlchemyError as e:
             return e

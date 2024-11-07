@@ -51,7 +51,8 @@ class EmployeeService(Service):
     def get_all(self):
         try:
             with Session(self.engine) as session:
-                employees = session.query(Employee).all()
+                result = session.query(Employee).all()
+                employees = [employee.to_json() for employee in result]
                 return employees
         except SQLAlchemyError as e:
             return e
